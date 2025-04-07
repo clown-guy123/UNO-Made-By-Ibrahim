@@ -1,35 +1,173 @@
-UNO - Made By Ibrahim body { font-family: Arial, sans-serif; background: #e74c3c; color: #fff; text-align: center; margin: 0; padding: 20px; } h1, h2, h3, p { margin: 0.5em 0; } button { margin: 10px; padding: 10px 20px; font-size: 16px; cursor: pointer; } .section { margin: 40px 0; } .hidden { display: none; } .card { display: inline-block; width: 60px; height: 90px; background: #fff; color: #000; border-radius: 10px; line-height: 90px; margin: 5px; font-weight: bold; font-size: 20px; } .game-board { margin: 20px 0; } .hand { display: flex; flex-wrap: wrap; justify-content: center; } UNO Made By Ibrahim 
+<!DOCTYPE html>
+<html>
+<head>
+  <title>UNO - Made By Ibrahim</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #e74c3c; color: #fff; text-align: center; margin: 0; padding: 20px; }
+    h1, h2, h3, p { margin: 0.5em 0; }
+    button { margin: 10px; padding: 10px 20px; font-size: 16px; cursor: pointer; }
+    .section { margin: 40px 0; }
+    .hidden { display: none; }
+    .card { display: inline-block; width: 60px; height: 90px; background: #fff; color: #000; border-radius: 10px; line-height: 90px; margin: 5px; font-weight: bold; font-size: 20px; }
+    .game-board { margin: 20px 0; }
+    .hand { display: flex; flex-wrap: wrap; justify-content: center; }
+  </style>
+</head>
+<body>
 
-Inspired By UNO Game
+  <h1>UNO Made By Ibrahim</h1>
+  <p>Inspired By UNO Game</p>
 
-Choose Game Mode Play With Bot Play With A Friend Play On Single Computer 
+  <div class="section">
+    <h2>Choose Game Mode</h2>
+    <button onclick="selectBot()">Play With Bot</button>
+    <button onclick="selectFriend()">Play With A Friend</button>
+    <button onclick="selectLocal()">Play On Single Computer</button>
+  </div>
 
-Choose Difficulty Easy Normal Hard 
+  <div id="bot-difficulty" class="section hidden">
+    <h2>Choose Difficulty</h2>
+    <button onclick="startGame('bot', 'easy')">Easy</button>
+    <button onclick="startGame('bot', 'normal')">Normal</button>
+    <button onclick="startGame('bot', 'hard')">Hard</button>
+  </div>
 
-Game Code: ABC123 
+  <div id="friend-code" class="section hidden">
+    <h3>Game Code: ABC123</h3>
+    <p>Share this code with your friend to play.</p>
+    <button onclick="startGame('friend')">Start Game</button>
+  </div>
 
-Share this code with your friend to play.
+  <div id="local-play" class="section hidden">
+    <p>Tell the other player to look away when it’s not their turn!</p>
+    <button onclick="startGame('local')">Start Game</button>
+  </div>
 
-Start Game 
+  <div class="section">
+    <h2>Special Code</h2>
+    <input id="code-input" placeholder="Enter code..." />
+    <button onclick="checkCode()">Submit</button>
+    <p id="code-result"></p>
+    <p>How to Find Codes:</p>
+    <p>Ibrahim's Friends May Know Special Codes!</p>
+    <p><i>Hint: Add Capitalization To Every Word's First Letter</i></p>
+  </div>
 
-Tell the other player to look away when it’s not their turn!
+  <div id="game-area" class="hidden">
+    <h2>Your Turn</h2>
+    <div>Top Card: <span id="top-card">[None]</span></div>
+    <div class="hand" id="player-hand"></div>
+    <button onclick="drawCard()">Draw Card</button>
+  </div>
 
-Start Game 
+  <script>
+    let playerHand = [];
+    let deck = [];
+    let topCard = null;
+    let cheatActive = false;
 
-Special Code Submit 
+    function selectBot() {
+      document.getElementById('bot-difficulty').classList.remove('hidden');
+      document.getElementById('friend-code').classList.add('hidden');
+      document.getElementById('local-play').classList.add('hidden');
+    }
 
-How to Find Codes: 
+    function selectFriend() {
+      document.getElementById('bot-difficulty').classList.add('hidden');
+      document.getElementById('friend-code').classList.remove('hidden');
+      document.getElementById('local-play').classList.add('hidden');
+    }
 
-Ibrahim's Friends May Know Special Codes!
+    function selectLocal() {
+      document.getElementById('bot-difficulty').classList.add('hidden');
+      document.getElementById('friend-code').classList.add('hidden');
+      document.getElementById('local-play').classList.remove('hidden');
+    }
 
-Hint: Add Capitalization To Every Word's First Letter
+    function checkCode() {
+      const input = document.getElementById("code-input").value;
+      const result = document.getElementById("code-result");
+      if (input === "IbrahimAtRoblox!") {
+        cheatActive = true;
+        result.textContent = "Code accepted! You get a special win card!";
+      } else {
+        result.textContent = "Invalid code.";
+      }
+    }
 
-Your Turn 
+    function startGame(mode, difficulty) {
+      document.getElementById('bot-difficulty').classList.add('hidden');
+      document.getElementById('friend-code').classList.add('hidden');
+      document.getElementById('local-play').classList.add('hidden');
+      document.getElementById('game-area').classList.remove('hidden');
+      initDeck();
+      dealCards();
+      renderHand();
+      setTopCard();
+    }
 
-Top Card: [None]
+    function initDeck() {
+      const colors = ['R','G','B','Y'];
+      const values = ['0','1','2','3','4','5','6','7','8','9','+2','Skip','Reverse'];
+      deck = [];
+      colors.forEach(color => {
+        values.forEach(value => {
+          deck.push(`${color}-${value}`);
+        });
+      });
+      deck.push('WILD');
+      deck.push('WILD+4');
+    }
 
-Your Hand:
+    function dealCards() {
+      playerHand = [];
+      for (let i = 0; i < 7; i++) {
+        playerHand.push(drawFromDeck());
+      }
+    }
 
-Draw Card 
+    function drawFromDeck() {
+      if (deck.length === 0) initDeck();
+      return deck.splice(Math.floor(Math.random() * deck.length), 1)[0];
+    }
 
-let playerHand = []; let deck = []; let topCard = null; let cheatActive = false; function selectBot() { document.getElementById('bot-difficulty').classList.remove('hidden'); document.getElementById('friend-code').classList.add('hidden'); document.getElementById('local-play').classList.add('hidden'); } function selectFriend() { document.getElementById('bot-difficulty').classList.add('hidden'); document.getElementById('friend-code').classList.remove('hidden'); document.getElementById('local-play').classList.add('hidden'); } function selectLocal() { document.getElementById('bot-difficulty').classList.add('hidden'); document.getElementById('friend-code').classList.add('hidden'); document.getElementById('local-play').classList.remove('hidden'); } function checkCode() { const input = document.getElementById("code-input").value; const result = document.getElementById("code-result"); if (input === "IbrahimAtRoblox!") { cheatActive = true; result.textContent = "Code accepted! You get a special win card!"; } else { result.textContent = "Invalid code."; } } function startGame(mode, difficulty) { document.getElementById('bot-difficulty').classList.add('hidden'); document.getElementById('friend-code').classList.add('hidden'); document.getElementById('local-play').classList.add('hidden'); document.getElementById('game-area').classList.remove('hidden'); initDeck(); dealCards(); renderHand(); setTopCard(); } function initDeck() { const colors = ['R','G','B','Y']; const values = ['0','1','2','3','4','5','6','7','8','9','+2','Skip','Reverse']; deck = []; colors.forEach(color => { values.forEach(value => { deck.push(`${color}-${value}`); }); }); deck.push('WILD'); deck.push('WILD+4'); } function dealCards() { playerHand = []; for (let i = 0; i { const div = document.createElement('div'); div.className = 'card'; div.textContent = card; div.onclick = () => playCard(i); handDiv.appendChild(div); }); } function playCard(index) { const card = playerHand[index]; if (cheatActive || card.split('-')[0] === topCard.split('-')[0] || card.split('-')[1] === topCard.split('-')[1] || card.startsWith('WILD')) { topCard = card; document.getElementById('top-card').textContent = topCard; playerHand.splice(index, 1); renderHand(); if (cheatActive || playerHand.length === 0) { alert('You Win!'); } } else { alert('Invalid move. Card must match color or number.'); } } function drawCard() { playerHand.push(drawFromDeck()); renderHand(); } 
+    function setTopCard() {
+      topCard = drawFromDeck();
+      document.getElementById('top-card').textContent = topCard;
+    }
+
+    function renderHand() {
+      const handDiv = document.getElementById('player-hand');
+      handDiv.innerHTML = '';
+      playerHand.forEach((card, i) => {
+        const div = document.createElement('div');
+        div.className = 'card';
+        div.textContent = card;
+        div.onclick = () => playCard(i);
+        handDiv.appendChild(div);
+      });
+    }
+
+    function playCard(index) {
+      const card = playerHand[index];
+      if (cheatActive || card.split('-')[0] === topCard.split('-')[0] || card.split('-')[1] === topCard.split('-')[1] || card.startsWith('WILD')) {
+        topCard = card;
+        document.getElementById('top-card').textContent = topCard;
+        playerHand.splice(index, 1);
+        renderHand();
+        if (cheatActive || playerHand.length === 0) {
+          alert('You Win!');
+        }
+      } else {
+        alert('Invalid move. Card must match color or number.');
+      }
+    }
+
+    function drawCard() {
+      playerHand.push(drawFromDeck());
+      renderHand();
+    }
+  </script>
+
+</body>
+  </html>
